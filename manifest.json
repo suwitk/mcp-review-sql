@@ -1,0 +1,139 @@
+{
+  "dxt_version": "0.1",
+  "name": "sqlserver-review-mcp",
+  "display_name": "SQL Server Review MCP",
+  "version": "1.0.0",
+  "description": "Read-only SQL Server diagnostics for application performance/architecture reviews: schema, indexes, execution plans, Query Store, waits.",
+  "author": {
+    "name": "noom"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "SQLSERVER_HOST": "${user_config.sqlserver_host}",
+        "SQLSERVER_PORT": "${user_config.sqlserver_port}",
+        "SQLSERVER_DATABASE": "${user_config.sqlserver_database}",
+        "SQLSERVER_USER": "${user_config.sqlserver_user}",
+        "SQLSERVER_PASSWORD": "${user_config.sqlserver_password}",
+        "SQLSERVER_USE_WINDOWS_AUTH": "${user_config.sqlserver_use_windows_auth}",
+        "SQLSERVER_USE_AZURE_AD": "${user_config.sqlserver_use_azure_ad}",
+        "SQLSERVER_ENCRYPT": "${user_config.sqlserver_encrypt}",
+        "SQLSERVER_TRUST_SERVER_CERTIFICATE": "${user_config.sqlserver_trust_server_certificate}",
+        "SQLSERVER_QUERY_TIMEOUT_MS": "${user_config.sqlserver_query_timeout_ms}",
+        "SQLSERVER_MAX_ROWS": "${user_config.sqlserver_max_rows}",
+        "MCP_LOG_LEVEL": "${user_config.mcp_log_level}",
+        "MCP_AUDIT_LOG": "${user_config.mcp_audit_log}",
+        "MCP_REDACT_COLUMNS": "${user_config.mcp_redact_columns}",
+        "SQLSERVER_ENABLE_AD_HOC_SQL": "${user_config.sqlserver_enable_ad_hoc_sql}"
+      }
+    }
+  },
+  "user_config": {
+    "sqlserver_host": {
+      "type": "string",
+      "title": "SQL Server Host",
+      "description": "Hostname or IP of the SQL Server instance, e.g. sql-review.internal.pttdigital.com",
+      "required": true
+    },
+    "sqlserver_port": {
+      "type": "string",
+      "title": "SQL Server Port",
+      "description": "TCP port (default 1433)",
+      "default": "1433",
+      "required": false
+    },
+    "sqlserver_database": {
+      "type": "string",
+      "title": "Database Name",
+      "description": "Target application database to review",
+      "required": true
+    },
+    "sqlserver_user": {
+      "type": "string",
+      "title": "SQL Login (read-only review account)",
+      "description": "Use the dedicated mcp_code_review account created via sql/create-review-user.sql — never a write-capable account. Leave blank if using Windows/Entra ID auth below.",
+      "required": false
+    },
+    "sqlserver_password": {
+      "type": "string",
+      "title": "SQL Password",
+      "description": "Password for the read-only review account. Leave blank if using Windows/Entra ID auth.",
+      "sensitive": true,
+      "required": false
+    },
+    "sqlserver_use_windows_auth": {
+      "type": "string",
+      "title": "Use Windows Authentication",
+      "description": "'true' to use integrated/Windows auth instead of the SQL login above",
+      "default": "false",
+      "required": false
+    },
+    "sqlserver_use_azure_ad": {
+      "type": "string",
+      "title": "Use Azure AD (Entra ID) Authentication",
+      "description": "'true' for Azure SQL Database with Entra ID default-credential auth",
+      "default": "false",
+      "required": false
+    },
+    "sqlserver_encrypt": {
+      "type": "string",
+      "title": "Encrypt Connection",
+      "description": "'true' to require TLS encryption (recommended)",
+      "default": "true",
+      "required": false
+    },
+    "sqlserver_trust_server_certificate": {
+      "type": "string",
+      "title": "Trust Server Certificate",
+      "description": "'true' only for on-prem servers with a self-signed cert you trust; keep 'false' otherwise",
+      "default": "false",
+      "required": false
+    },
+    "sqlserver_query_timeout_ms": {
+      "type": "string",
+      "title": "Query Timeout (ms)",
+      "description": "Per-query timeout enforced on every tool call",
+      "default": "15000",
+      "required": false
+    },
+    "sqlserver_max_rows": {
+      "type": "string",
+      "title": "Maximum Rows Per Response",
+      "description": "Hard cap on rows returned by any tool, regardless of what the caller requests",
+      "default": "1000",
+      "required": false
+    },
+    "mcp_log_level": {
+      "type": "string",
+      "title": "Log Level",
+      "description": "debug | info | warn | error (logs go to stderr, never stdout)",
+      "default": "info",
+      "required": false
+    },
+    "mcp_audit_log": {
+      "type": "string",
+      "title": "Enable Audit Log",
+      "description": "'true' to emit one structured audit line per tool call",
+      "default": "true",
+      "required": false
+    },
+    "mcp_redact_columns": {
+      "type": "string",
+      "title": "Redacted Column Patterns",
+      "description": "Comma-separated column-name substrings whose values are replaced with ***REDACTED*** in query results",
+      "default": "password,password_hash,token,secret,ssn,credit_card,api_key,connection_string",
+      "required": false
+    },
+    "sqlserver_enable_ad_hoc_sql": {
+      "type": "string",
+      "title": "Enable Ad-Hoc SQL Tools (execute_select / get_estimated_plan)",
+      "description": "'true' to expose sqlserver.execute_select and sqlserver.get_estimated_plan — the only two tools that run caller-supplied SQL text. Keep 'false' until the login above is the locked-down mcp_code_review account, not a broad test/admin login. Every other tool only runs fixed queries and is unaffected either way.",
+      "default": "false",
+      "required": false
+    }
+  }
+}

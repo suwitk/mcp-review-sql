@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL Server Review MCP — รีวิวตาม spec</title>
+  <style>
+    :root{--ink:#16253b;--muted:#52637a;--line:#cdd9e4;--paper:#f3f7fb;--white:#fff;--blue:#115e9c;--cyan:#dceff6;--red:#a12a36;--amber:#8b5c11;--green:#177359}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 "Segoe UI",Tahoma,sans-serif}
+    a{color:var(--blue)}a:focus-visible,button:focus-visible{outline:3px solid #0b84c6;outline-offset:3px}
+    .shell{max-width:1480px;margin:auto;display:grid;grid-template-columns:245px minmax(0,1fr);gap:36px;padding:28px 34px 70px}
+    nav{position:sticky;top:22px;height:max-content;border:1px solid var(--line);background:var(--white);padding:22px;border-radius:14px}
+    nav .brand{font:700 14px/1.3 Consolas,monospace;color:var(--blue);letter-spacing:.08em;text-transform:uppercase}
+    nav a{display:block;text-decoration:none;color:var(--muted);padding:8px 0;border-bottom:1px solid #edf2f6}nav a:hover{color:var(--blue)}
+    main{min-width:0}.hero{background:linear-gradient(115deg,#12334f,#156e97);color:white;border-radius:22px;padding:42px 48px;position:relative;overflow:hidden}
+    .hero:after{content:"SELECT";position:absolute;right:-26px;bottom:-40px;font:900 150px/1 Consolas,monospace;color:#ffffff12;pointer-events:none}
+    .eyebrow{font:700 13px Consolas,monospace;letter-spacing:.13em;text-transform:uppercase;color:#91dbef}h1{font-size:clamp(32px,4vw,58px);line-height:1.15;margin:14px 0 18px;letter-spacing:-.03em}.hero p{max-width:760px;margin:0;color:#e0edf4;font-size:18px}
+    .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:26px;font:13px Consolas,monospace;color:#c1e2ef}.meta span{border:1px solid #ffffff40;border-radius:100px;padding:6px 12px}
+    section{background:var(--white);border:1px solid var(--line);border-radius:18px;margin-top:24px;padding:30px 36px}h2{font-size:28px;line-height:1.3;margin:0 0 18px}h3{font-size:20px;margin:25px 0 9px}p{margin:10px 0}small,.muted{color:var(--muted)}
+    .verdict{border-left:5px solid var(--amber);background:#fff8ea;padding:18px 22px;border-radius:8px;font-size:18px}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:20px 0}.card{border:1px solid var(--line);border-radius:12px;padding:18px;background:#f9fcfe}.card b{display:block;font-size:30px;line-height:1.2;color:var(--blue)}.card span{color:var(--muted);font-size:14px}
+    .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0}.flow i{font-style:normal;color:var(--muted)}.flow span{font:600 13px Consolas,monospace;background:var(--cyan);padding:10px 13px;border-radius:8px}
+    .finding{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:10px;padding:18px 22px;margin:15px 0}.finding.high{border-left-color:var(--red)}.finding h3{margin:0 0 8px}.pill{font:700 12px Consolas,monospace;padding:4px 7px;border-radius:5px;margin-right:8px;background:#fbe1e4;color:var(--red)}.pill.p2{background:#fff0d6;color:var(--amber)}
+    .evidence{font:13px/1.5 Consolas,monospace;word-break:break-word;color:var(--muted);background:#f1f6fa;padding:10px 12px;border-radius:6px;margin-top:10px}code{font:14px Consolas,monospace;background:#eff4f8;padding:2px 5px;border-radius:4px}pre{white-space:pre-wrap;background:#102638;color:#e5f3fa;padding:19px;border-radius:10px;font:14px/1.6 Consolas,monospace;overflow:auto}
+    .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:13px 10px}th{position:sticky;top:0;background:#e9f2f7;color:#25445a;font-size:12px;text-transform:uppercase;letter-spacing:.05em}td:first-child{font:600 13px/1.5 Consolas,monospace;min-width:225px;color:#164a73}tr:hover td{background:#f8fbfd}
+    .tag{display:inline-block;border-radius:50px;padding:2px 8px;background:#e8f3ef;color:var(--green);font-size:12px;white-space:nowrap}.tag.gated{background:#fff0d6;color:var(--amber)}
+    .source-list li{margin:7px 0}.check{padding-left:20px}.check li{margin:8px 0}.footer{padding:30px 10px;color:var(--muted);font-size:13px}
+    @media(max-width:900px){.shell{display:block;padding:14px}nav{position:static;margin-bottom:16px}nav a{display:inline-block;margin-right:12px;border:0}.hero{padding:30px}section{padding:23px}.cards{grid-template-columns:1fr}}
+    @media print{body{background:white}.shell{display:block;padding:0}nav{display:none}.hero{color:var(--ink);background:white;border:1px solid var(--line)}.hero p,.meta{color:var(--ink)}section{break-inside:avoid;border-radius:0;margin-top:15px}.finding{break-inside:avoid}a{color:var(--ink)}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <nav aria-label="สารบัญ">
+    <div class="brand">SQL / Review MCP</div>
+    <a href="#verdict">ผลรีวิว</a><a href="#origin">ที่มาและขอบเขต</a><a href="#architecture">ระบบทำงานอย่างไร</a><a href="#findings">ข้อค้นพบ</a><a href="#coverage">เทียบ spec</a><a href="#tools">เครื่องมือทุกตัว</a><a href="#workflow">ตัวอย่าง workflow</a><a href="#validation">การตรวจสอบ</a><a href="#sources">แหล่งอ้างอิง</a>
+  </nav>
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Independent implementation review / 2026-09-16</div>
+      <h1>SQL Server Review MCP<br>รีวิวใหม่ตาม spec</h1>
+      <p>รายงานจากโค้ดปัจจุบัน อธิบายว่าข้อกำหนดแต่ละส่วนมาจากไหน เครื่องมือแต่ละตัวให้หลักฐานอะไร และเงื่อนไขใดที่ยังทำให้ไม่พร้อมรับรองการใช้ production</p>
+      <div class="meta"><span>TypeScript + MCP stdio</span><span>20 tool names / 18 เปิดโดยค่าเริ่มต้น</span><span>50 unit tests ผ่าน</span></div>
+    </header>
+
+    <section id="verdict">
+      <h2>ผลรีวิว</h2>
+      <div class="verdict"><strong>โครงหลักตรงกับ spec แต่ยังไม่ผ่าน Definition of Done สำหรับ production</strong> เครื่องมือ schema, procedure, Query Store และ diagnostics มีครบเป็นส่วนใหญ่ ขณะที่ SELECT/estimated plan ถูกปิดโดยค่าเริ่มต้น การควบคุมข้อมูลลับยังมีช่องทางรั่ว และยังไม่มีผลทดสอบกับ SQL Server จริงหรือบัญชีที่ล็อกสิทธิ์แล้ว</div>
+      <div class="cards"><div class="card"><b>20</b><span>ชื่อเครื่องมือที่มีในโค้ด; 2 ตัวต้องเปิด opt-in</span></div><div class="card"><b>50 / 3</b><span>unit tests ผ่าน / integration tests ถูกข้าม</span></div><div class="card"><b>6</b><span>ประเด็นที่ควรแก้ก่อนรับรอง production</span></div></div>
+      <p>คำว่า “read-only” มีสองชั้น: โค้ดตั้งใจส่งเฉพาะคำสั่งอ่าน และบัญชี SQL ต้องถูกจำกัดสิทธิ์จริงในระบบปลายทาง รายงานนี้ตรวจโค้ดและ SQL setup script ได้ แต่ยังตรวจสิทธิ์จริงของ login ที่จะ deploy ไม่ได้</p>
+    </section>
+
+    <section id="origin">
+      <h2>ที่มาและขอบเขต</h2>
+      <p>เกณฑ์หลักคือ spec <em>SQL Server Review MCP</em> ที่ผู้ใช้แนบมา โดยเฉพาะ §5–6 (security/account), §7–14 (tools), §15–18 (limits/redaction/audit/errors), §19–20 (capability/tests) และ §24 (Definition of Done) จุดประสงค์คือให้ AI reviewer ไล่หลักฐานจาก endpoint ไปจนถึง SQL Server โดยไม่แก้ state ของระบบ</p>
+      <p>ผมตรวจ <a href="../src/server.ts">การลงทะเบียน tool</a>, <a href="../src/db/query.ts">ชั้น query</a>, <a href="../src/security/sql-guard.ts">SQL guard</a>, <a href="../sql/create-review-user.sql">account script</a>, tool handlers, config, README และ tests ปัจจุบัน รายงานนี้เป็นการตรวจแบบ static พร้อม build/unit tests; ไม่ได้ยิงคำสั่งกับ production หรือ SQL Server ตัวอย่าง</p>
+    </section>
+
+    <section id="architecture">
+      <h2>ระบบทำงานอย่างไร</h2>
+      <div class="flow" aria-label="เส้นทางคำขอ"><span>AI client</span><i>→</i><span>MCP stdio</span><i>→</i><span>Zod validation</span><i>→</i><span>tool handler</span><i>→</i><span>mssql pool</span><i>→</i><span>SQL Server</span></div>
+      <p><a href="../src/index.ts">index.ts</a> โหลด environment และต่อ stdio transport; <a href="../src/server.ts">server.ts</a> ลงทะเบียน tool และห่อผลเป็น JSON พร้อม audit; <a href="../src/db/capabilities.ts">capabilities.ts</a> probe feature ตอน startup; <a href="../src/db/query.ts">query.ts</a> ผูก parameter, timeout และ stream ผลที่มี row cap</p>
+      <p>สำหรับ SQL ที่ผู้เรียกส่งมาเอง มี SQL guard ปฏิเสธ DML/DDL และหลาย statement, row cap, timeout และ redaction ของชื่อคอลัมน์ ก่อนตอบ MCP ทั้งสอง tool นี้ต้องตั้ง <code>SQLSERVER_ENABLE_AD_HOC_SQL=true</code> จึงปรากฏในรายการ tool ตาม <a href="../src/server.ts">server.ts</a> และ <a href="../.env.example">.env.example</a> บัญชี SQL ใน <a href="../sql/create-review-user.sql">create-review-user.sql</a> เป็นขอบเขตสิทธิ์หลัก; script ให้ VIEW DEFINITION/VIEW DATABASE STATE และ DENY write แต่ SELECT บนข้อมูลและ SHOWPLAN ต้อง grant แบบเลือกเอง</p>
+      <p>มีข้อจำกัดตามธรรมชาติของ interface: MCP นี้ดูหลักฐานฝั่งฐานข้อมูลได้ แต่ไม่สามารถวัด Browser Network, frontend หรือ backend โดยตรง การเชื่อมจุดเหล่านั้นต้องใช้โค้ด application และข้อมูลจาก browser/API ที่ AI reviewer มีจากแหล่งอื่น</p>
+    </section>
+
+    <section id="findings">
+      <h2>ข้อค้นพบที่มีผลจริง</h2>
+      <div class="finding high"><h3><span class="pill">P1</span>ข้อมูลลับยังออกทางผล tool ได้</h3><p><a href="../src/tools/diagnostics.ts">get_active_expensive_queries</a> คืน <code>LEFT(t.text, 2000)</code> เป็น <code>commandText</code> ตรง ๆ หาก session อื่นรัน SQL ที่มี literal token/password ข้อมูลนั้นจะถูกส่งถึง MCP client แม้ audit log ไม่เก็บ SQL แล้ว อีกทางหนึ่ง <a href="../src/tools/query.ts">execute_select</a> redact ตาม <em>ชื่อคอลัมน์ผลลัพธ์</em> เท่านั้น: <code>SELECT password AS value</code> หลบ pattern ได้เมื่อ account มี SELECT บนตารางนั้น ขัดกับ spec §16 ที่ห้ามเผย obvious credential fields</p><p><strong>ทิศทางแก้:</strong> ตัด command text ออกจาก active requests หรือคืน fingerprint/ข้อความที่ scrub literal อย่างเชื่อถือได้ และจำกัด SELECT บนข้อมูลจริงอย่างเข้มงวด; redaction จาก alias ไม่ใช่ขอบเขตความปลอดภัยที่พอจะรับรอง production</p><div class="evidence">หลักฐาน: src/tools/diagnostics.ts:249–255; src/tools/query.ts:33; src/security/redaction.ts:18–27; spec §16</div></div>
+      <div class="finding high"><h3><span class="pill">P1</span>Node รุ่นที่ประกาศว่ารองรับรันคำสั่ง start ไม่ได้</h3><p><a href="../package.json">package.json</a> ระบุ <code>node &gt;=20.6</code> แต่ <code>start</code>/<code>dev</code> ใช้ <code>--env-file-if-exists</code> ซึ่ง <a href="https://nodejs.org/download/release/v22.12.0/docs/api/cli.html#--env-file-if-existsconfig">เอกสาร Node.js CLI</a> ระบุว่าเพิ่มใน v22.9.0 ดังนั้นเครื่องที่ใช้ Node 20 LTS ตามเงื่อนไข package จะเริ่ม server ผ่าน npm scripts ไม่สำเร็จ</p><p><strong>ทิศทางแก้:</strong> เปลี่ยน minimum version เป็นรุ่นที่รองรับ flag หรือใช้วิธีโหลด env ที่ทำงานบน Node 20; ตรวจ README และ extension launch command ให้ตรงกัน</p><div class="evidence">หลักฐาน: package.json:12–18; Node.js CLI reference</div></div>
+      <div class="finding"><h3><span class="pill p2">P2</span>Query Store ถูกมองว่าใช้งานได้ทั้งที่ actual state เป็น OFF/ERROR</h3><p><a href="../src/db/capabilities.ts">capabilities.ts</a> probe ว่ามองเห็น <code>actual_state</code> ได้หรือไม่ แล้วให้ <code>queryStore=true</code> โดยไม่ตรวจค่า state หาก Query Store ปิดหรืออยู่ใน ERROR tool ด้าน Query Store จะผ่าน gate แต่ได้ผลว่างหรือ error แบบ DATABASE_ERROR แทน <code>QUERY_STORE_DISABLED</code> ตาม spec §18–19 ทั้งที่ <a href="../src/tools/database-info.ts">get_database_info</a> มีการตรวจ actual state อยู่แล้ว</p><p><strong>ทิศทางแก้:</strong> อ่าน <code>actual_state_desc</code> ใน startup probe แล้วกำหนด capability จาก READ_WRITE/READ_ONLY/READ_CAPTURE_SECONDARY และบันทึกเหตุผลจริง</p><div class="evidence">หลักฐาน: src/db/capabilities.ts:25–29; src/tools/database-info.ts:41–45; <a href="https://learn.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-database-query-store-options-transact-sql">Microsoft Query Store catalog reference</a></div></div>
+      <div class="finding"><h3><span class="pill p2">P2</span>Probe บางตัวไม่ได้พิสูจน์ permission ที่อ้าง</h3><p><code>viewDefinition</code> ถือว่าผ่านเมื่อ query <code>OBJECT_DEFINITION(...)</code> ทำงาน แม้ค่าที่ได้เป็น NULL เพราะไม่มีสิทธิ์หรือไม่มี procedure ส่วน <code>viewServerState</code> ใช้การอ่าน <code>sys.dm_exec_sessions</code> ซึ่งไม่ยืนยันว่าอ่าน DMV/index usage ที่ tool ต้องการได้จริง ผลคือ capability flag และ <code>usageStatsAvailable</code> อาจบอกว่าพร้อมทั้งที่ข้อมูลจริงไม่มา</p><p><strong>ทิศทางแก้:</strong> ใช้ <code>HAS_PERMS_BY_NAME</code> กับสิทธิ์ที่ต้องการหรือ probe DMV เดียวกับ tool และแยกสถานะ “ไม่มี object ให้ทดสอบ” ออกจาก “มี permission”</p><div class="evidence">หลักฐาน: src/db/capabilities.ts:40–49; src/tools/indexes.ts:71–117; spec §19</div></div>
+      <div class="finding"><h3><span class="pill p2">P2</span>Tool บางตัวไม่มี limit แม้ผลโตได้</h3><p><a href="../src/tools/diagnostics.ts">get_blocking_summary</a> คืนทุกแถวจาก waiting tasks และ <code>get_table_stats</code> คืนทุก stats object ของ table โดยไม่ใช้ <code>TOP</code> หรือ <code>maxRows</code> ใน <code>runQuery</code> หาก server มีการรอจำนวนมากหรือ table มี stats มาก ผล MCP และหน่วยความจำจะโตโดยไม่มี cap ขัดกับ spec §15</p><p><strong>ทิศทางแก้:</strong> เพิ่ม input limit/default, ใช้ TOP แบบ parameterized และส่ง maxRows ไปชั้น query; บอก truncated เมื่อมีรายการเกิน cap</p><div class="evidence">หลักฐาน: src/tools/diagnostics.ts:72–106, 183–215; src/db/query.ts:49–87; spec §15</div></div>
+      <div class="finding"><h3><span class="pill p2">P2</span>ยังพิสูจน์ SQL boundary และ driver behavior ไม่ได้</h3><p>unit tests 50 รายการผ่าน แต่ integration tests 3 รายการถูก skip และ test สิทธิ์บัญชีใน <a href="../tests/integration/live.test.ts">live.test.ts</a> ลอง UPDATE <code>sys.objects</code> ซึ่งไม่ใช่ application table และจะล้มเหลวแม้ login บางชนิดมี write สิทธิ์บน application table ดังนั้นยังพิสูจน์ข้อ §24(11) “account independently prevents writes” ไม่ได้ อีกทั้ง estimated plan/stream cancel/Query Store SQL ยังไม่เคยรันกับ SQL Server จริงในรอบนี้</p><p><strong>ทิศทางแก้:</strong> ใช้ disposable SQL Server พร้อม application table fixture และล็อก account ตาม script, ทดสอบ SELECT/plan/Query Store/row limit รวมถึง write attempt โดยตรงบน fixture</p><div class="evidence">หลักฐาน: tests/integration/live.test.ts:7–43; tests/tools/stream-limit.test.ts:27–38; spec §20, §24</div></div>
+    </section>
+
+    <section id="coverage">
+      <h2>เทียบกับ spec แบบเป็นหมวด</h2>
+      <div class="table-wrap"><table><thead><tr><th>หมวด spec</th><th>สถานะ</th><th>หลักฐานและเงื่อนไข</th></tr></thead><tbody>
+        <tr><td>§2 เทคโนโลยี / stdio</td><td><span class="tag">ตรง</span></td><td>TypeScript, official SDK, mssql, zod; index.ts ต่อ StdioServerTransport; server.ts แยกจาก transport</td></tr>
+        <tr><td>§5–6 read-only account</td><td><span class="tag gated">ต้องพิสูจน์จริง</span></td><td>SQL script มี DENY DML/DDL และไม่ grant broad role; สิทธิ์จริงของ deploy account ยังไม่ถูกทดสอบบน application table</td></tr>
+        <tr><td>§7–14 tools</td><td><span class="tag gated">มีครบแบบมี gate</span></td><td>20 ชื่อ; execute_select และ get_estimated_plan ไม่ register โดยค่าเริ่มต้น; optional tools เพิ่มครบ 6 ชื่อ</td></tr>
+        <tr><td>§15 limits / timeout</td><td><span class="tag gated">บางส่วน</span></td><td>generic SELECT stream/cancel; Query Store history มี cap; blocking/table stats และบาง metadata responses ยังไม่มี cap</td></tr>
+        <tr><td>§16 redaction</td><td><span class="tag gated">ยังเสี่ยง</span></td><td>redact ตาม output column name ใน execute_select; active commandText และ alias ยังเผยข้อความได้</td></tr>
+        <tr><td>§17–18 audit / errors</td><td><span class="tag">ส่วนใหญ่ตรง</span></td><td>audit JSON ลง stderr, SQL fingerprint; driver errors เปลี่ยนเป็นข้อความทั่วไป; audit ปิดได้ด้วย env</td></tr>
+        <tr><td>§19 capability</td><td><span class="tag gated">ยังไม่แม่น</span></td><td>startup probes ไม่ทำให้ server ล้มเพราะ optional feature แต่ Query Store/permission flags มี false positive</td></tr>
+        <tr><td>§20 / §24 tests &amp; DoD</td><td><span class="tag gated">ยังไม่ครบ</span></td><td>50 unit tests ผ่าน; 3 integration tests skip; ไม่ได้พิสูจน์พฤติกรรมกับ SQL Server จริง</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="tools">
+      <h2>Tool แต่ละตัวทำอะไร</h2>
+      <p>รายการด้านล่างยึดชื่อที่ <a href="../src/server.ts">server.ts</a> register จริง คำว่า “หลักฐานที่ได้” คือข้อมูลที่ AI reviewer ใช้ประกอบข้อสรุป ไม่ใช่คำวินิจฉัย root cause โดยอัตโนมัติ ค่า input ที่ไม่ใส่ใช้ default ใน Zod schema หรือ config</p>
+      <div class="table-wrap"><table><thead><tr><th>Tool</th><th>รับอะไร</th><th>หลักฐานที่ได้ / ใช้ตอนไหน</th><th>ที่มาและข้อจำกัด</th></tr></thead><tbody>
+        <tr><td>sqlserver.get_database_info</td><td>ไม่มี input</td><td>ชื่อ DB, version/edition, compatibility, snapshot isolation, recovery model, Query Store state/capabilities; เริ่มสำรวจ environment</td><td><a href="../src/tools/database-info.ts">database-info.ts</a> จาก sys.databases / database_query_store_options</td></tr>
+        <tr><td>sqlserver.list_schemas</td><td>namePattern?</td><td>ชื่อ schema กับ owner; คัดพื้นที่ application ก่อนสำรวจ table</td><td><a href="../src/tools/schemas.ts">schemas.ts</a> จาก sys.schemas; LIKE pattern</td></tr>
+        <tr><td>sqlserver.list_tables</td><td>schema?, namePattern?, maxRows?</td><td>ชื่อ/ชนิด table, approximate row count, created/modified; ระบุ table ที่เกี่ยวกับ endpoint</td><td><a href="../src/tools/tables.ts">tables.ts</a> จาก sys.partitions ไม่ใช้ COUNT(*)</td></tr>
+        <tr><td>sqlserver.describe_table</td><td>schema=dbo, table</td><td>คอลัมน์, type/length, nullable, identity, computed/default, PK; ตรวจ schema/predicate</td><td><a href="../src/tools/tables.ts">tables.ts</a> metadata เท่านั้น ไม่คืน records</td></tr>
+        <tr><td>sqlserver.get_indexes</td><td>schema=dbo, table</td><td>index type, uniqueness, key ASC/DESC, include, filter, disabled; usage seeks/scans/lookups/updates ถ้ามีสิทธิ์</td><td><a href="../src/tools/indexes.ts">indexes.ts</a>; usage reset เมื่อ restart/failover</td></tr>
+        <tr><td>sqlserver.get_foreign_keys</td><td>schema=dbo, table</td><td>ความสัมพันธ์ incoming/outgoing, source/target columns, delete/update action; ไล่เส้นทาง join</td><td><a href="../src/tools/foreign-keys.ts">foreign-keys.ts</a>; composite FK grouped ตาม constraint</td></tr>
+        <tr><td>sqlserver.describe_procedure</td><td>schema=dbo, procedure</td><td>parameters, type, output/default, ordinal; เชื่อม API/repository ไป stored procedure</td><td><a href="../src/tools/procedures.ts">procedures.ts</a> จาก sys.parameters; ไม่ execute procedure</td></tr>
+        <tr><td>sqlserver.get_procedure_definition</td><td>schema=dbo, procedure</td><td>source definition แบบจำกัดความยาว; อ่าน predicate/join ภายใน procedure</td><td><a href="../src/tools/procedures.ts">procedures.ts</a>; ต้อง VIEW DEFINITION และไม่ encrypted</td></tr>
+        <tr><td>sqlserver.execute_select</td><td>sql, parameters?, maxRows?</td><td>แถวผล, duration, truncated; ตรวจ SELECT ที่สัมพันธ์กับโค้ด repository</td><td><span class="tag gated">opt-in</span> <a href="../src/tools/query.ts">query.ts</a>; SQL guard, parameter binding, streaming cap, column-name redaction; account ต้องมี SELECT</td></tr>
+        <tr><td>sqlserver.get_estimated_plan</td><td>sql, parameters?, includeRawXml?</td><td>estimated cost/operators/rows/warnings; เห็น scan/sort/lookup/implicit conversion โดยไม่รัน SELECT</td><td><span class="tag gated">opt-in</span> <a href="../src/tools/execution-plan.ts">execution-plan.ts</a>; ใช้ transaction pin connection และ SET SHOWPLAN_XML; ต้อง SHOWPLAN + สิทธิ์ SELECT</td></tr>
+        <tr><td>sqlserver.query_store_top_queries</td><td>lookbackHours=24, orderBy=duration/cpu/logical_reads/executions, limit=20</td><td>query/plan ID, SQL text จำกัด, execution count, duration/CPU/reads; หา workload ที่หนัก</td><td><a href="../src/tools/query-store.ts">query-store.ts</a>; Query Store ต้องใช้งานและมีสิทธิ์</td></tr>
+        <tr><td>sqlserver.query_store_query</td><td>queryId, historyLimit=100</td><td>query text, plans และ runtimeHistory ตาม interval พร้อม weighted averages; เปรียบเทียบก่อน/หลัง regression</td><td><a href="../src/tools/query-store.ts">query-store.ts</a>; history จำกัดจำนวนและมี truncated flag</td></tr>
+        <tr><td>sqlserver.get_wait_stats</td><td>topN=20</td><td>wait type, category, time/count, signal/resource time; แยก CPU/IO/locking/network</td><td><a href="../src/tools/waits.ts">waits.ts</a> จาก instance DMV; cumulative ไม่ใช่ root cause เอง</td></tr>
+        <tr><td>sqlserver.get_missing_index_stats</td><td>limit=50</td><td>table/columns, seeks/scans, estimated impact; ใช้เป็นสัญญาณให้ตรวจ index ที่มี</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a>; advisory warning ชัดเจน ไม่สร้าง index</td></tr>
+        <tr><td>sqlserver.get_table_stats</td><td>schema=dbo, table</td><td>statistics name, lastUpdated, rows sampled, steps/columns; ประเมิน cardinality/staleness</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a>; ยังไม่มี limit</td></tr>
+        <tr><td>sqlserver.get_index_usage</td><td>schema=dbo, table</td><td>ข้อมูลเดียวกับ get_indexes รวม usage; เปิดชื่อเฉพาะให้ reviewer หาได้ง่าย</td><td><a href="../src/server.ts">server.ts</a> เป็น alias ของ get_indexes; ไม่ใช่ DMV query แยก</td></tr>
+        <tr><td>sqlserver.get_database_files</td><td>ไม่มี input</td><td>file type/size/growth/path; ตรวจ capacity และ layout ของ DB</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a> จาก sys.database_files</td></tr>
+        <tr><td>sqlserver.get_io_stats</td><td>ไม่มี input</td><td>reads/writes, stall, bytes, avg stall ต่อ file; ช่วยแยก storage pressure</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a>; instance DMV/permission, cumulative</td></tr>
+        <tr><td>sqlserver.get_blocking_summary</td><td>ไม่มี input</td><td>waiting/blocking session, wait type/duration/resource; ตรวจ lock contention ปัจจุบัน</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a>; snapshot ไม่ KILL session; ยังไม่มี limit</td></tr>
+        <tr><td>sqlserver.get_active_expensive_queries</td><td>limit=20</td><td>session/status, CPU/reads/elapsed/wait และ command text; ดู request ที่กำลังแพง</td><td><a href="../src/tools/diagnostics.ts">diagnostics.ts</a>; ต้องระวัง SQL text ที่อาจมีข้อมูลลับ</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="workflow">
+      <h2>ตัวอย่างการใช้เพื่อรีวิว endpoint</h2>
+      <p>สมมติ browser แจ้งว่า <code>GET /api/customers?keyword=abc</code> ใช้ 4.2 วินาที reviewer ต้องดู route/controller/repository จากโค้ดแอปเอง แล้วใช้ MCP ตรวจฐานข้อมูลตามลำดับนี้:</p>
+      <ol class="check"><li>ใช้ <code>describe_procedure</code>/<code>get_procedure_definition</code> หรือดู SQL ใน repository เพื่อรู้ query ที่ backend ส่ง</li><li>ใช้ <code>query_store_top_queries</code> หา query/plan ที่สัมพันธ์กับ SQL นั้น แล้ว <code>query_store_query</code> ดู duration/reads และ runtimeHistory ตามช่วงเวลา</li><li>เปิด ad-hoc gate เมื่อ account/permissions ถูกตรวจแล้ว และใช้ <code>get_estimated_plan</code> ตรวจ scan, sort, lookup หรือ conversion ของ SELECT เดียวกัน</li><li>ใช้ <code>describe_table</code>, <code>get_indexes</code>, <code>get_table_stats</code> ยืนยันโครงสร้าง/index/statistics; ใช้ waits/IO/blocking เป็นหลักฐานเสริม</li></ol>
+      <p>ข้อสรุปที่ปลอดภัยคือ “Query Store แสดงอ่าน 1.8M pages และ estimated plan มี clustered scan บน dbo.Customers; ควรทบทวน predicate/index แล้ว benchmark workload เดิม” ยังสรุปว่า DB เป็นสาเหตุทั้งหมดของ 4.2 วินาทีไม่ได้หากไม่มี timing ของ frontend/backend และ actual workload ที่สัมพันธ์กัน</p>
+    </section>
+
+    <section id="validation">
+      <h2>การตรวจสอบและข้อจำกัดของผลรีวิว</h2>
+      <p>ตรวจ build ด้วย <code>npm run build</code> ผ่าน และ <code>npm test</code> ผ่าน 50 tests; integration tests 3 tests ถูก skip ตาม <code>RUN_INTEGRATION_TESTS</code> รอบนี้ไม่ได้ตรวจ startup MCP กับ client จริง, SQL Server network/Query Store จริง, SHOWPLAN permission หรือสิทธิ์บัญชีใน production</p>
+      <p>ลำดับที่ควรทำก่อนรับรอง: แก้ data exposure และ Node version, ทำ capability probe ให้ตรง state/permission, ใส่ cap ให้ tool ที่ขาด, จากนั้นตั้ง disposable SQL Server พร้อม locked-down account แล้วรัน end-to-end tests. หลังผ่านจึงเปิด ad-hoc gate ใน environment ที่ต้องใช้</p>
+    </section>
+
+    <section id="sources">
+      <h2>แหล่งอ้างอิง</h2>
+      <ul class="source-list"><li>Spec ที่ผู้ใช้แนบ: <em>SQL Server Review MCP</em> §5–6, §7–20, §24; เป็นเกณฑ์ว่าต้องมีอะไรและต้องปลอดภัยระดับใด</li><li>โค้ดใน repo: <a href="../src/server.ts">server.ts</a>, <a href="../src/db/query.ts">db/query.ts</a>, <a href="../src/db/capabilities.ts">db/capabilities.ts</a>, <a href="../src/tools/diagnostics.ts">tools/diagnostics.ts</a>, <a href="../src/tools/query-store.ts">tools/query-store.ts</a>, <a href="../sql/create-review-user.sql">account SQL</a>, <a href="../tests/integration/live.test.ts">integration tests</a></li><li><a href="https://nodejs.org/download/release/v22.12.0/docs/api/cli.html#--env-file-if-existsconfig">Node.js CLI reference</a>: เวอร์ชันที่เริ่มรองรับ <code>--env-file-if-exists</code></li><li><a href="https://learn.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-database-query-store-options-transact-sql">Microsoft Query Store options reference</a>: actual state OFF/READ_ONLY/READ_WRITE/ERROR</li><li><a href="https://learn.microsoft.com/en-us/sql/t-sql/statements/set-showplan-xml-transact-sql">Microsoft SHOWPLAN_XML reference</a>: SELECT ไม่ถูก execute เมื่อเปิด SHOWPLAN และต้องมี SHOWPLAN/SELECT permission</li></ul>
+    </section>
+    <div class="footer">รายงาน static review ของ workspace ณ 16 กันยายน 2026 · เปิดไฟล์นี้ได้โดยตรงใน browser · ไม่ได้แก้โค้ด production ในรอบนี้</div>
+  </main>
+</div>
+</body>
+</html>
